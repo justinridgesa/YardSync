@@ -5,19 +5,28 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
 
-  // Create a test yard
-  const yard = await prisma.yard.create({
-    data: {
-      name: 'Green Pastures Yard',
-      location: 'Devon, UK',
-    },
+  // Find or create a test yard
+  let yard = await prisma.yard.findFirst({
+    where: { name: 'Green Pastures Yard' },
   });
 
-  console.log(`Created yard: ${yard.name}`);
+  if (!yard) {
+    yard = await prisma.yard.create({
+      data: {
+        name: 'Green Pastures Yard',
+        location: 'Devon, UK',
+      },
+    });
+    console.log(`Created yard: ${yard.name}`);
+  } else {
+    console.log(`Found existing yard: ${yard.name}`);
+  }
 
-  // Create admin user
-  const admin = await prisma.user.create({
-    data: {
+  // Create or update admin user
+  const admin = await prisma.user.upsert({
+    where: { email: 'justinridgesa@gmail.com' },
+    update: {},
+    create: {
       email: 'justinridgesa@gmail.com',
       name: 'Justin Ridge',
       password: 'ircftpie',
@@ -26,22 +35,26 @@ async function main() {
     },
   });
 
-  console.log(`Created admin user: ${admin.email}`);
+  console.log(`Admin user: ${admin.email}`);
 
-  // Create managers
-  const manager1 = await prisma.user.create({
-    data: {
+  // Create or update managers
+  const manager1 = await prisma.user.upsert({
+    where: { email: 'manager@example.com' },
+    update: {},
+    create: {
       email: 'manager@example.com',
       name: 'John Manager',
-      password: 'hashed_password_here', // In real app, hash this
+      password: 'hashed_password_here',
       role: 'YARD_MANAGER',
       yardId: yard.id,
     },
   });
 
-  // Create grooms
-  const groom1 = await prisma.user.create({
-    data: {
+  // Create or update grooms
+  const groom1 = await prisma.user.upsert({
+    where: { email: 'sarah@example.com' },
+    update: {},
+    create: {
       email: 'sarah@example.com',
       name: 'Sarah Groom',
       password: 'hashed_password_here',
@@ -50,8 +63,10 @@ async function main() {
     },
   });
 
-  const groom2 = await prisma.user.create({
-    data: {
+  const groom2 = await prisma.user.upsert({
+    where: { email: 'tom@example.com' },
+    update: {},
+    create: {
       email: 'tom@example.com',
       name: 'Tom Groom',
       password: 'hashed_password_here',
@@ -62,8 +77,10 @@ async function main() {
 
   // Create sample horses
   const horses = await Promise.all([
-    prisma.horse.create({
-      data: {
+    prisma.horse.upsert({
+      where: { passportNumber: '123456' },
+      update: {},
+      create: {
         yardId: yard.id,
         name: 'Equestrian',
         age: 5,
@@ -74,8 +91,10 @@ async function main() {
         supplements: 'Biotin, Omega 3',
       },
     }),
-    prisma.horse.create({
-      data: {
+    prisma.horse.upsert({
+      where: { passportNumber: '789012' },
+      update: {},
+      create: {
         yardId: yard.id,
         name: 'Midnight Star',
         age: 8,
@@ -85,8 +104,10 @@ async function main() {
         feedPlan: '2 scoops morning, 2 evening',
       },
     }),
-    prisma.horse.create({
-      data: {
+    prisma.horse.upsert({
+      where: { passportNumber: '345678' },
+      update: {},
+      create: {
         yardId: yard.id,
         name: 'Bella',
         age: 3,
@@ -97,7 +118,7 @@ async function main() {
     }),
   ]);
 
-  console.log(`Created ${horses.length} horses`);
+  console.log(`Horses ready: ${horses.length}`);
 
   // Create sample tasks
   const task = await prisma.task.create({
