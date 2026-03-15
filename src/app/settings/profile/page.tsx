@@ -37,8 +37,9 @@ export default function UserProfilePage() {
   });
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [createFormData, setCreateFormData] = useState({
+    firstName: '',
+    lastName: '',
     email: '',
-    name: '',
     password: '',
     role: 'GROOM',
   });
@@ -103,12 +104,18 @@ export default function UserProfilePage() {
     setMessage(null);
 
     try {
+      const fullName = `${createFormData.firstName} ${createFormData.lastName}`.trim();
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(createFormData),
+        body: JSON.stringify({
+          email: createFormData.email,
+          name: fullName,
+          password: createFormData.password,
+          role: createFormData.role,
+        }),
       });
 
       const responseData = await response.json();
@@ -123,13 +130,15 @@ export default function UserProfilePage() {
         name: responseData.user.name,
         email: responseData.user.email,
         role: responseData.user.role,
+        contactNumber: undefined,
       };
       setUsers([...users, newUser]);
 
       // Reset form
       setCreateFormData({
+        firstName: '',
+        lastName: '',
         email: '',
-        name: '',
         password: '',
         role: 'GROOM',
       });
@@ -137,7 +146,7 @@ export default function UserProfilePage() {
 
       setMessage({
         type: 'success',
-        text: `User ${createFormData.name} created successfully!`,
+        text: `User ${fullName} created successfully!`,
       });
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to create user';
@@ -196,6 +205,11 @@ export default function UserProfilePage() {
     }
   };
 
+  const handleUserClick = (userItem: UserItem) => {
+    setSelectedUser(userItem);
+    setMessage(null);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -220,7 +234,6 @@ export default function UserProfilePage() {
     const submitData = {
       firstName: formData.firstName,
       lastName: formData.lastName,
-      contactNumber: formData.contactNumber,
       permissionLevel: formData.permissionLevel,
       userId: selectedUser.id,
     };
@@ -253,7 +266,7 @@ export default function UserProfilePage() {
       if (responseData.user) {
         const updatedUsers = users.map(u => 
           u.id === selectedUser.id 
-            ? { ...u, name: responseData.user.name, role: responseData.user.role, contactNumber: responseData.user.contactNumber }
+            ? { ...u, name: responseData.user.name, role: responseData.user.role }
             : u
         );
         setUsers(updatedUsers);
@@ -263,14 +276,12 @@ export default function UserProfilePage() {
           ...selectedUser,
           name: responseData.user.name,
           role: responseData.user.role,
-          contactNumber: responseData.user.contactNumber,
         });
         
         // Update current user in auth context if this is the logged-in user
         if (selectedUser.id === user?.id) {
           updateUser({
             name: responseData.user.name,
-            contactNumber: responseData.user.contactNumber,
             role: responseData.user.role,
           });
         }
@@ -331,10 +342,19 @@ export default function UserProfilePage() {
                     <div className="space-y-3">
                       <input
                         type="text"
-                        placeholder="Full Name"
-                        name="name"
-                        value={createFormData.name}
-                        onChange={(e) => setCreateFormData({ ...createFormData, name: e.target.value })}
+                        placeholder="First Name"
+                        name="firstName"
+                        value={createFormData.firstName}
+                        onChange={(e) => setCreateFormData({ ...createFormData, firstName: e.target.value })}
+                        required
+                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Last Name"
+                        name="lastName"
+                        value={createFormData.lastName}
+                        onChange={(e) => setCreateFormData({ ...createFormData, lastName: e.target.value })}
                         required
                         className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
                       />

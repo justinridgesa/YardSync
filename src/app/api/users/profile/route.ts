@@ -6,7 +6,6 @@ export const dynamic = 'force-dynamic';
 
 interface UpdateUserData {
   name: string;
-  contactNumber?: string;
   role?: string;
 }
 
@@ -31,7 +30,7 @@ export async function PUT(request: NextRequest) {
     // Parse request body
     const body = await request.json();
     console.log('🔵 [API] Request body:', body);
-    const { firstName, lastName, contactNumber, permissionLevel, userId } = body;
+    const { firstName, lastName, permissionLevel, userId } = body;
 
     // Validate required fields
     if (!firstName || !lastName) {
@@ -50,10 +49,6 @@ export async function PUT(request: NextRequest) {
     const updateData: UpdateUserData = {
       name: `${firstName} ${lastName}`,
     };
-
-    if (contactNumber) {
-      updateData.contactNumber = contactNumber;
-    }
 
     if (permissionLevel) {
       updateData.role = permissionLevel;
@@ -76,7 +71,6 @@ export async function PUT(request: NextRequest) {
           id: user.id,
           email: user.email,
           name: user.name,
-          contactNumber: user.contactNumber || null,
           role: user.role,
         },
       },
