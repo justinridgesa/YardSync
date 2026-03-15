@@ -1,0 +1,275 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============= CORE MODELS =============
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  name          String
+  password      String
+  role          String     // YARD_MANAGER, GROOM, OWNER, VET, FARRIER
+  yardId        String
+  yard          Yard       @relation(fields: [yardId], references: [id])
+  
+  assignedHorses Horse[]    @relation("GroomAssignment")
+  ownedHorses    Horse[]    @relation("OwnerAssignment")
+  
+  createdTasks   Task[]
+  completedTasks TaskCompletion[]
+  createdNotes   Note[]
+  createdExpenses Expense[]
+  attachments    Attachment[]
+  
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([yardId])
+  @@index([role])
+}
+
+model Yard {
+  id            String     @id @default(cuid())
+  name          String
+  location      String?
+  users         User[]
+  horses        Horse[]
+  tasks         Task[]
+  notes         Note[]
+  expenses      Expense[]
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+// ============= HORSE MANAGEMENT =============
+
+model Horse {
+  id                String      @id @default(cuid())
+  yardId            String
+  yard              Yard        @relation(fields: [yardId], references: [id])
+  
+  name              String
+  age               Int
+  breed             String?
+  color             String?
+  sex               String?
+  passportNumber    String?     @unique
+  
+  assignedGroom     String?
+  groom             User?       @relation("GroomAssignment", fields: [assignedGroom], references: [id])
+  owner             User?       @relation("OwnerAssignment", fields: [ownerId], references: [id])
+  ownerId           String?
+  
+  feedPlan          String?
+  supplements       String?
+  activeMedication  String?
+  workSchedule      String?
+  
+  vaccinations      Vaccination[]
+  medicalHistory    MedicalHistory[]
+  
+  tasks             Task[]
+  taskCompletions   TaskCompletion[]
+  notes             Note[]
+  expenses          Expense[]
+  attachments       Attachment[]
+  
+  currentAlertLevel String     @default("GREEN") // GREEN, AMBER, RED
+  lastNoteAt        DateTime?
+  medicationOverdue Boolean     @default(false)
+  
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([yardId])
+  @@index([assignedGroom])
+  @@index([ownerId])
+}
+
+model Vaccination {
+  id            String    @id @default(cuid())
+  horseId       String
+  horse         Horse     @relation(fields: [horseId], references: [id], onDelete: Cascade)
+  
+  name          String
+  nextDueDate   DateTime
+  lastDate      DateTime?
+  notes         String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([horseId])
+}
+
+model MedicalHistory {
+  id               String      @id @default(cuid())
+  horseId          String
+  horse            Horse       @relation(fields: [horseId], references: [id], onDelete: Cascade)
+  
+  date             DateTime
+  condition        String
+  treatment        String?
+  vetNotes         String?
+  attachments      Attachment[]
+  
+  createdAt        DateTime    @default(now())
+
+  @@index([horseId])
+}
+
+// ============= TASK MANAGEMENT =============
+
+model Task {
+  id            String    @id @default(cuid())
+  yardId        String
+  yard          Yard      @relation(fields: [yardId], references: [id])
+  
+  name          String
+  description   String?
+  category      String // FEEDING, TURNOUT, MUCKING, SUPPLEMENTS, MEDICATION, EXERCISE, GROOMING, HEALTH_CHECK, YARD_MAINTENANCE, OTHER
+  
+  frequency     String // DAILY, WEEKLY, MONTHLY, ONCE
+  dueDate       DateTime
+  completedAt   DateTime?
+  
+  horseId       String?
+  horse         Horse?    @relation(fields: [horseId], references: [id], onDelete: SetNull)
+  
+  status        String    @default("PENDING") // PENDING, COMPLETED, MISSED, OVERDUE
+  completedBy   String?
+  
+  createdById   String
+  createdBy     User      @relation(fields: [createdById], references: [id])
+  
+  completions   TaskCompletion[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([horseId])
+  @@index([yardId])
+  @@index([dueDate])
+  @@index([status])
+}
+
+model TaskCompletion {
+  id            String    @id @default(cuid())
+  taskId        String
+  task          Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  horseId       String?
+  horse         Horse?    @relation(fields: [horseId], references: [id], onDelete: SetNull)
+  
+  completedBy   String
+  user          User      @relation(fields: [completedBy], references: [id])
+  
+  completedAt   DateTime  @default(now())
+  notes         String?
+  
+  createdAt     DateTime  @default(now())
+
+  @@index([taskId])
+  @@index([horseId])
+  @@index([completedBy])
+}
+
+// ============= NOTES & ACTIVITY FEED =============
+
+model Note {
+  id            String    @id @default(cuid())
+  
+  yardId        String
+  yard          Yard      @relation(fields: [yardId], references: [id])
+  
+  horseId       String
+  horse         Horse     @relation(fields: [horseId], references: [id], onDelete: Cascade)
+  
+  text          String
+  tag           String // HEALTH, TRAINING, BEHAVIOR, INJURY, FEED, EQUIPMENT, BEHAVIOR_CHANGE, OTHER
+  
+  createdBy     String
+  author        User      @relation(fields: [createdBy], references: [id])
+  
+  attachments   Attachment[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([horseId])
+  @@index([yardId])
+  @@index([createdAt])
+  @@index([tag])
+}
+
+// ============= EXPENSES =============
+
+model Expense {
+  id            String    @id @default(cuid())
+  
+  yardId        String
+  yard          Yard      @relation(fields: [yardId], references: [id])
+  
+  date          DateTime
+  vendor        String
+  category      String // FEED, VET, FARRIER, BEDDING, LABOUR, EQUIPMENT, OTHER
+  amount        Float
+  notes         String?
+  
+  horseId       String?
+  horse         Horse?    @relation(fields: [horseId], references: [id], onDelete: SetNull)
+  
+  createdBy     String
+  user          User      @relation(fields: [createdBy], references: [id])
+  
+  attachments   Attachment[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([yardId])
+  @@index([date])
+  @@index([horseId])
+}
+
+// ============= FILES =============
+
+model Attachment {
+  id               String     @id @default(cuid())
+  
+  horseId          String?
+  horse            Horse?     @relation(fields: [horseId], references: [id], onDelete: Cascade)
+  
+  noteId           String?
+  note             Note?      @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  
+  expenseId        String?
+  expense          Expense?   @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  
+  medicalHistoryId String?
+  medicalHistory   MedicalHistory? @relation(fields: [medicalHistoryId], references: [id], onDelete: Cascade)
+  
+  filename         String
+  mimeType         String
+  size             Int
+  url              String
+  
+  uploadedBy       String
+  uploader         User       @relation(fields: [uploadedBy], references: [id])
+  
+  createdAt        DateTime   @default(now())
+
+  @@index([horseId])
+  @@index([noteId])
+  @@index([expenseId])
+}
