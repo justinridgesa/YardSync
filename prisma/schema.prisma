@@ -17,7 +17,8 @@ model User {
   email         String     @unique
   name          String
   password      String
-  role          String     // YARD_MANAGER, GROOM, OWNER, VET, FARRIER
+  role          String     // ADMINISTRATOR, MANAGER, GROOM, VET, FARRIER
+  contactNumber String?    // Optional contact number
   yardId        String
   yard          Yard       @relation(fields: [yardId], references: [id])
   

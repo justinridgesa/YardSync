@@ -6,6 +6,8 @@ interface User {
   id: string;
   email: string;
   name: string;
+  contactNumber?: string;
+  role?: string;
 }
 
 interface AuthContextType {
@@ -13,6 +15,7 @@ interface AuthContextType {
   isLoggedIn: boolean;
   login: (user: User) => void;
   logout: () => void;
+  updateUser: (user: Partial<User>) => void;
   isLoading: boolean;
 }
 
@@ -37,8 +40,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = (userData: User) => {
+    console.log('🔐 [AuthContext] Logging in user:', userData);
     setUser(userData);
     localStorage.setItem('yard_sync_user', JSON.stringify(userData));
+  };
+
+  const updateUser = (userData: Partial<User>) => {
+    console.log('🔐 [AuthContext] updateUser called with:', userData);
+    setUser(prev => {
+      if (!prev) {
+        console.error('🔐 [AuthContext] ERROR: No existing user to update!');
+        return null;
+      }
+      const updated = { ...prev, ...userData };
+      console.log('🔐 [AuthContext] Merged user object:', updated);
+      localStorage.setItem('yard_sync_user', JSON.stringify(updated));
+      
+      // Verify localStorage was written
+      const storedData = localStorage.getItem('yard_sync_user');
+      console.log('🔐 [AuthContext] Verified localStorage contains:', JSON.parse(storedData || '{}'));
+      
+      return updated;
+    });
   };
 
   const logout = () => {
@@ -47,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout, updateUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

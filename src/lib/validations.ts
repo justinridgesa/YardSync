@@ -5,7 +5,7 @@ export const userCreateSchema = z.object({
   email: z.string().email(),
   name: z.string().min(2),
   password: z.string().min(8),
-  role: z.enum(['YARD_MANAGER', 'GROOM', 'OWNER']),
+  role: z.enum(['ADMINISTRATOR', 'MANAGER', 'GROOM', 'VET', 'FARRIER']),
   yardId: z.string(),
 });
 

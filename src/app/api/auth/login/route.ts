@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
         name: true,
         password: true,
         role: true,
+        contactNumber: true,
       },
     });
 
@@ -51,6 +52,7 @@ export async function POST(request: NextRequest) {
           email: user.email,
           name: user.name,
           role: user.role,
+          contactNumber: user.contactNumber,
         },
       },
       { status: 200 }
