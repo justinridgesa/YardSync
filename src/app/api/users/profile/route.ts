@@ -27,10 +27,8 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // TODO: Extract actual user ID from token
-    // For now, this is a placeholder - you'll need to decode the JWT token
-    // to get the actual user ID
-    const userId = 'placeholder-user-id';
+    // The token value IS the user ID (set in login)
+    const userId = token;
 
     // Update user in database
     const user = await prisma.user.update({
