@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import { Header } from '@/components/Header';
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Trash2 } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -34,6 +34,13 @@ export default function UserProfilePage() {
     email: '',
     contactNumber: '',
     permissionLevel: 'ADMINISTRATOR',
+  });
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [createFormData, setCreateFormData] = useState({
+    email: '',
+    name: '',
+    password: '',
+    role: 'GROOM',
   });
 
   // Add a global debug function
@@ -90,9 +97,103 @@ export default function UserProfilePage() {
     }
   }, [selectedUser]);
 
-  const handleUserClick = (userItem: UserItem) => {
-    setSelectedUser(userItem);
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
     setMessage(null);
+
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(createFormData),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to create user');
+      }
+
+      // Add new user to the list
+      const newUser: UserItem = {
+        id: responseData.user.id,
+        name: responseData.user.name,
+        email: responseData.user.email,
+        role: responseData.user.role,
+      };
+      setUsers([...users, newUser]);
+
+      // Reset form
+      setCreateFormData({
+        email: '',
+        name: '',
+        password: '',
+        role: 'GROOM',
+      });
+      setShowCreateForm(false);
+
+      setMessage({
+        type: 'success',
+        text: `User ${createFormData.name} created successfully!`,
+      });
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to create user';
+      setMessage({
+        type: 'error',
+        text: errorMsg,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    if (!confirm(`Are you sure you want to delete ${userName}? This action cannot be undone.`)) {
+      return;
+    }
+
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/users', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to delete user');
+      }
+
+      // Remove user from list
+      setUsers(users.filter(u => u.id !== userId));
+
+      // Clear selection if deleted user was selected
+      if (selectedUser?.id === userId) {
+        setSelectedUser(null);
+      }
+
+      setMessage({
+        type: 'success',
+        text: `User ${userName} deleted successfully!`,
+      });
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to delete user';
+      setMessage({
+        type: 'error',
+        text: errorMsg,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -214,6 +315,79 @@ export default function UserProfilePage() {
             <div className="lg:col-span-1">
               <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200 sticky top-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Users</h3>
+
+                {/* Create User Button */}
+                <button
+                  onClick={() => setShowCreateForm(!showCreateForm)}
+                  className="w-full mb-4 inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+                >
+                  + New User
+                </button>
+
+                {/* Create User Form */}
+                {showCreateForm && (
+                  <form onSubmit={handleCreateUser} className="mb-4 p-4 border-2 border-emerald-300 rounded-lg bg-emerald-50">
+                    <h4 className="font-semibold text-sm text-gray-900 mb-3">Create New User</h4>
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        placeholder="Full Name"
+                        name="name"
+                        value={createFormData.name}
+                        onChange={(e) => setCreateFormData({ ...createFormData, name: e.target.value })}
+                        required
+                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                      />
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        name="email"
+                        value={createFormData.email}
+                        onChange={(e) => setCreateFormData({ ...createFormData, email: e.target.value })}
+                        required
+                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                      />
+                      <input
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        value={createFormData.password}
+                        onChange={(e) => setCreateFormData({ ...createFormData, password: e.target.value })}
+                        required
+                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                      />
+                      <select
+                        name="role"
+                        value={createFormData.role}
+                        onChange={(e) => setCreateFormData({ ...createFormData, role: e.target.value })}
+                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                      >
+                        <option value="ADMINISTRATOR">Administrator</option>
+                        <option value="MANAGER">Manager</option>
+                        <option value="GROOM">Groom</option>
+                        <option value="VET">Vet</option>
+                        <option value="FARRIER">Farrier</option>
+                      </select>
+                      <div className="flex gap-2">
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:bg-gray-400 transition-colors"
+                        >
+                          Create
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowCreateForm(false)}
+                          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                )}
+
                 {usersLoading ? (
                   <p className="text-sm text-gray-500">Loading users...</p>
                 ) : users.length === 0 ? (
@@ -223,16 +397,32 @@ export default function UserProfilePage() {
                     {users.map((userItem) => (
                       <li
                         key={userItem.id}
-                        onClick={() => handleUserClick(userItem)}
-                        className={`p-3 rounded-lg border transition-colors cursor-pointer ${
+                        className={`p-3 rounded-lg border transition-colors ${
                           selectedUser?.id === userItem.id
                             ? 'bg-emerald-50 border-emerald-300'
                             : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
                         }`}
                       >
-                        <p className="font-medium text-sm text-gray-900">{userItem.name}</p>
-                        <p className="text-xs text-gray-500">{userItem.email}</p>
-                        <p className="text-xs text-gray-600 mt-1">{userItem.role}</p>
+                        <div className="flex items-start justify-between gap-2">
+                          <div
+                            onClick={() => handleUserClick(userItem)}
+                            className="flex-1 cursor-pointer"
+                          >
+                            <p className="font-medium text-sm text-gray-900">{userItem.name}</p>
+                            <p className="text-xs text-gray-500">{userItem.email}</p>
+                            <p className="text-xs text-gray-600 mt-1">{userItem.role}</p>
+                          </div>
+                          {userItem.id !== user?.id && (
+                            <button
+                              onClick={() => handleDeleteUser(userItem.id, userItem.name)}
+                              disabled={loading}
+                              className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Delete user"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
+                        </div>
                       </li>
                     ))}
                   </ul>
