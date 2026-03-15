@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, LogOut, Settings } from 'lucide-react';
+import { Home, LogOut } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 
@@ -13,9 +13,8 @@ interface HeaderProps {
 export function Header({ title, subtitle }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isLoggedIn, logout, user } = useAuth();
+  const { isLoggedIn, logout } = useAuth();
   const isHome = pathname === '/';
-  const isSettings = pathname === '/settings';
 
   const handleLogout = () => {
     // Clear auth cookie
@@ -64,30 +63,14 @@ export function Header({ title, subtitle }: HeaderProps) {
                 <span className="hidden sm:inline">Home</span>
               </Link>
             )}
-            {!isSettings && isLoggedIn && (
-              <Link
-                href="/settings"
-                className="group inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 hover:border-emerald-300 hover:bg-emerald-50 transition-all duration-200 sm:px-6 sm:py-3"
-              >
-                <Settings className="h-4 w-4 text-gray-500 group-hover:text-emerald-600 transition-colors" />
-                <span className="hidden sm:inline">Settings</span>
-              </Link>
-            )}
             {isLoggedIn && (
-              <div className="flex flex-col items-end gap-2">
-                <button
-                  onClick={handleLogout}
-                  className="group inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 hover:border-red-300 hover:bg-red-50 transition-all duration-200 sm:px-6 sm:py-3"
-                >
-                  <LogOut className="h-4 w-4 text-gray-500 group-hover:text-red-600 transition-colors" />
-                  <span className="hidden sm:inline">Logout</span>
-                </button>
-                {user && (
-                  <p className="text-xs text-gray-600">
-                    Welcome, {user.name.split(' ')[0]}
-                  </p>
-                )}
-              </div>
+              <button
+                onClick={handleLogout}
+                className="group inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 hover:border-red-300 hover:bg-red-50 transition-all duration-200 sm:px-6 sm:py-3"
+              >
+                <LogOut className="h-4 w-4 text-gray-500 group-hover:text-red-600 transition-colors" />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
             )}
           </div>
         </div>

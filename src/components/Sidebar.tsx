@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Zap, Settings, LogOut, Menu, X } from 'lucide-react';
+import { Home, Zap, Settings, LogOut, Menu, X, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/context/AuthContext';
 
@@ -10,7 +10,9 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { logout, user } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [configureOpen, setConfigureOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -27,7 +29,6 @@ export function Sidebar() {
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: Home },
     { href: '/horses', label: 'Horses', icon: Zap },
-    { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
   if (!mounted) return null;
@@ -39,36 +40,47 @@ export function Sidebar() {
       {/* Mobile menu button */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => setMobileOpen(!mobileOpen)}
           className="inline-flex items-center justify-center rounded-lg bg-white p-2 text-gray-600 hover:bg-gray-100 shadow-sm border border-gray-200"
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {/* Overlay */}
-      {isOpen && (
+      {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={() => setIsOpen(false)}
+          onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-slate-900 to-slate-800 text-white shadow-lg transform transition-transform duration-300 ease-in-out md:translate-x-0 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-slate-900 to-slate-800 text-white shadow-lg transform transition-transform duration-300 ease-in-out ${
+          sidebarVisible ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        } ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
         <div className="flex h-full flex-col">
-          {/* Logo / Header */}
+          {/* Logo / Header with Hide Toggle */}
           <div className="border-b border-slate-700 px-6 py-6">
-            <h1 className="text-2xl font-bold text-white">Yard Sync</h1>
-            <p className="mt-1 text-sm text-slate-300">Horse Management</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-white">Yard Sync</h1>
+                <p className="mt-1 text-sm text-slate-300">Horse Management</p>
+              </div>
+              <button
+                onClick={() => setSidebarVisible(!sidebarVisible)}
+                className="hidden md:inline-flex p-1 text-slate-400 hover:text-white transition-colors"
+                title={sidebarVisible ? 'Hide sidebar' : 'Show sidebar'}
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-2 px-4 py-6">
+          <nav className="flex-1 space-y-2 px-4 py-6 overflow-y-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
@@ -76,7 +88,7 @@ export function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setMobileOpen(false)}
                   className={`flex items-center space-x-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
                     active
                       ? 'bg-emerald-600 text-white'
@@ -88,6 +100,53 @@ export function Sidebar() {
                 </Link>
               );
             })}
+
+            {/* Configure Menu */}
+            <div className="space-y-1">
+              <button
+                onClick={() => setConfigureOpen(!configureOpen)}
+                className="w-full flex items-center space-x-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                <Settings size={20} />
+                <span className="flex-1 text-left">Configure</span>
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform duration-200 ${
+                    configureOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {/* Submenu: Yard */}
+              {configureOpen && (
+                <Link
+                  href="/settings"
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center space-x-3 rounded-lg px-4 py-3 pl-12 text-sm font-medium transition-colors ${
+                    isActive('/settings')
+                      ? 'bg-emerald-600 text-white'
+                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                  }`}
+                >
+                  <span>Yard</span>
+                </Link>
+              )}
+
+              {/* Submenu: User Profile */}
+              {configureOpen && (
+                <Link
+                  href="/settings/profile"
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center space-x-3 rounded-lg px-4 py-3 pl-12 text-sm font-medium transition-colors ${
+                    isActive('/settings/profile')
+                      ? 'bg-emerald-600 text-white'
+                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                  }`}
+                >
+                  <span>User Profile</span>
+                </Link>
+              )}
+            </div>
           </nav>
 
           {/* Logout Button */}
@@ -109,7 +168,7 @@ export function Sidebar() {
       </aside>
 
       {/* Main content offset for desktop */}
-      <div className="hidden md:block w-64 flex-shrink-0" />
+      <div className={`hidden md:block ${sidebarVisible ? 'w-64' : 'w-0'} flex-shrink-0 transition-all duration-300`} />
     </>
   );
 }
