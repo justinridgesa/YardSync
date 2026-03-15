@@ -1,13 +1,13 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Sidebar } from '@/components/Sidebar';
+import { Sidebar } from './Sidebar';
 
-interface LayoutContentProps {
+interface LayoutWrapperProps {
   children: React.ReactNode;
 }
 
-export function LayoutContent({ children }: LayoutContentProps) {
+export function LayoutWrapper({ children }: LayoutWrapperProps) {
   const pathname = usePathname();
   const isAuthPage = pathname?.startsWith('/auth/');
 
