@@ -13,7 +13,7 @@ interface HeaderProps {
 export function Header({ title, subtitle }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, user } = useAuth();
   const isHome = pathname === '/';
   const isSettings = pathname === '/settings';
 
@@ -74,13 +74,20 @@ export function Header({ title, subtitle }: HeaderProps) {
               </Link>
             )}
             {isLoggedIn && (
-              <button
-                onClick={handleLogout}
-                className="group inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 hover:border-red-300 hover:bg-red-50 transition-all duration-200 sm:px-6 sm:py-3"
-              >
-                <LogOut className="h-4 w-4 text-gray-500 group-hover:text-red-600 transition-colors" />
-                <span className="hidden sm:inline">Logout</span>
-              </button>
+              <div className="flex flex-col items-end gap-2">
+                <button
+                  onClick={handleLogout}
+                  className="group inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 hover:border-red-300 hover:bg-red-50 transition-all duration-200 sm:px-6 sm:py-3"
+                >
+                  <LogOut className="h-4 w-4 text-gray-500 group-hover:text-red-600 transition-colors" />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+                {user && (
+                  <p className="text-xs text-gray-600">
+                    Welcome, {user.name.split(' ')[0]}
+                  </p>
+                )}
+              </div>
             )}
           </div>
         </div>

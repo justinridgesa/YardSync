@@ -9,7 +9,7 @@ import { useAuth } from '@/lib/context/AuthContext';
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -99,6 +99,11 @@ export function Sidebar() {
               <LogOut size={20} />
               <span>Logout</span>
             </button>
+            {user && (
+              <p className="mt-3 text-center text-sm text-slate-400">
+                Welcome, {user.name.split(' ')[0]}
+              </p>
+            )}
           </div>
         </div>
       </aside>
