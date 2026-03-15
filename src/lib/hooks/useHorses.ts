@@ -109,7 +109,7 @@ export function useHorse(horseId?: string) {
 export function useCreateHorse() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, unknown>({
     mutationFn: async (data: unknown) => {
       return apiPost('/horses', data);
     },
@@ -122,7 +122,7 @@ export function useCreateHorse() {
 export function useUpdateHorse(horseId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, unknown>({
     mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}`, data);
     },
@@ -136,7 +136,7 @@ export function useUpdateHorse(horseId: string) {
 export function useDeleteHorse() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, string>({
     mutationFn: async (horseId: string) => {
       return apiDelete(`/horses/${horseId}`);
     },

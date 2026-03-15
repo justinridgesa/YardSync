@@ -30,7 +30,7 @@ export function useCreateMedicalHistory(horseId: string) {
 export function useUpdateMedicalHistory(horseId: string, recordId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, unknown>({
     mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}/medical/${recordId}`, data);
     },
@@ -43,7 +43,7 @@ export function useUpdateMedicalHistory(horseId: string, recordId: string) {
 export function useDeleteMedicalHistory(horseId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, string>({
     mutationFn: async (recordId: string) => {
       return apiDelete(`/horses/${horseId}/medical/${recordId}`);
     },
@@ -57,7 +57,7 @@ export function useDeleteMedicalHistory(horseId: string) {
 export function useCreateVaccination(horseId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, unknown>({
     mutationFn: async (data: unknown) => {
       return apiPost(`/horses/${horseId}/vaccinations`, data);
     },
@@ -70,7 +70,7 @@ export function useCreateVaccination(horseId: string) {
 export function useUpdateVaccination(horseId: string, recordId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, unknown>({
     mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}/vaccinations/${recordId}`, data);
     },
@@ -83,7 +83,7 @@ export function useUpdateVaccination(horseId: string, recordId: string) {
 export function useDeleteVaccination(horseId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, string>({
     mutationFn: async (recordId: string) => {
       return apiDelete(`/horses/${horseId}/vaccinations/${recordId}`);
     },
@@ -97,7 +97,7 @@ export function useDeleteVaccination(horseId: string) {
 export function useCreateNote(horseId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, unknown>({
     mutationFn: async (data: unknown) => {
       return apiPost(`/horses/${horseId}/notes`, data);
     },
@@ -110,7 +110,7 @@ export function useCreateNote(horseId: string) {
 export function useUpdateNote(horseId: string, recordId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, unknown>({
     mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}/notes/${recordId}`, data);
     },
@@ -123,7 +123,7 @@ export function useUpdateNote(horseId: string, recordId: string) {
 export function useDeleteNote(horseId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, string>({
     mutationFn: async (recordId: string) => {
       return apiDelete(`/horses/${horseId}/notes/${recordId}`);
     },
@@ -137,7 +137,7 @@ export function useDeleteNote(horseId: string) {
 export function useCreateTask(horseId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, unknown>({
     mutationFn: async (data: unknown) => {
       return apiPost(`/horses/${horseId}/tasks`, data);
     },
@@ -150,7 +150,7 @@ export function useCreateTask(horseId: string) {
 export function useUpdateTask(horseId: string, recordId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, unknown>({
     mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}/tasks/${recordId}`, data);
     },
@@ -163,7 +163,7 @@ export function useUpdateTask(horseId: string, recordId: string) {
 export function useDeleteTask(horseId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<unknown, Error, string>({
     mutationFn: async (recordId: string) => {
       return apiDelete(`/horses/${horseId}/tasks/${recordId}`);
     },

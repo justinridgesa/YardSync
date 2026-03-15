@@ -19,12 +19,11 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
 
   const horses = await prisma.horse.findMany({
     where: {
-      yardId,
+      yardId: yardId as string,
       assignedGroom: assignedGroom || undefined,
       name: search
         ? {
             contains: search,
-            mode: 'insensitive',
           }
         : undefined,
     },

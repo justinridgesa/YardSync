@@ -47,7 +47,7 @@ export async function parseBody<T>(
   try {
     const body = await req.json();
     return schema.parse(body);
-  } catch (error) {
+  } catch {
     throw new ApiErrorClass('Invalid request body', 400);
   }
 }

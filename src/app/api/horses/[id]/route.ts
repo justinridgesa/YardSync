@@ -74,8 +74,8 @@ export const PATCH = withErrorHandling(async (req: NextRequest) => {
   const allowedFields = ['name', 'breed', 'age', 'sex', 'color', 'passportNumber', 'assignedGroom', 'ownerId', 'feedPlan', 'supplements', 'activeMedication', 'workSchedule'];
   
   for (const field of allowedFields) {
-    if (field in body && body[field] !== undefined) {
-      validFields[field] = body[field];
+    if (field in body && (body as Record<string, unknown>)[field] !== undefined) {
+      validFields[field] = (body as Record<string, unknown>)[field];
     }
   }
 
@@ -106,9 +106,8 @@ export const DELETE = withErrorHandling(async (req: NextRequest) => {
 
   // TODO: Verify user is YARD_MANAGER
 
-  await prisma.horse.update({
+  await prisma.horse.delete({
     where: { id: horseId },
-    data: { isDraft: true } // Soft delete
   });
 
   return successResponse({ success: true });

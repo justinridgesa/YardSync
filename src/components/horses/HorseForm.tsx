@@ -63,7 +63,7 @@ export function HorseForm({ horseId, yardId, onSuccess }: HorseFormProps) {
       };
       fetchYardId();
     }
-  }, [yardId]);
+  }, [yardId, currentYardId]);
 
   // Fetch team members (grooms and owners)
   useEffect(() => {
@@ -157,7 +157,10 @@ export function HorseForm({ horseId, yardId, onSuccess }: HorseFormProps) {
       onSuccess?.();
       router.push(horseId ? `/horses/${horseId}` : '/horses');
     } catch (err: unknown) {
-      setError((err as { message?: string })?.message || 'An error occurred');
+      const errorMsg = typeof err === 'object' && err !== null && 'message' in err
+        ? String((err as Record<string, unknown>).message)
+        : 'An error occurred';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,3 @@
-import { Role } from '@prisma/client';
-
 export interface ApiError {
   message: string;
   code?: string;
@@ -48,11 +46,11 @@ export const Errors = {
 };
 
 // RBAC helpers
-export const checkRole = (userRole: Role, ...allowedRoles: Role[]): boolean => {
+export const checkRole = (userRole: string, ...allowedRoles: string[]): boolean => {
   return allowedRoles.includes(userRole);
 };
 
-export const requireRole = (userRole: Role, ...allowedRoles: Role[]): void => {
+export const requireRole = (userRole: string, ...allowedRoles: string[]): void => {
   if (!checkRole(userRole, ...allowedRoles)) {
     Errors.forbidden();
   }

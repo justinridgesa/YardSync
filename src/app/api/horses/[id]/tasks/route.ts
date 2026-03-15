@@ -13,15 +13,27 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     Errors.badRequest('Horse ID is required');
   }
 
+  // Get horse to get yardId
+  const horse = await prisma.horse.findUnique({
+    where: { id: horseId },
+    select: { yardId: true },
+  });
+
+  if (!horse) {
+    Errors.notFound('Horse');
+  }
+
   const task = await prisma.task.create({
     data: {
       horseId,
-      title: body.title,
+      yardId: horse!.yardId,
+      name: body.name || body.title,
       description: body.description,
-      category: body.category || 'DAILY_CARE',
+      category: body.category || 'OTHER',
       frequency: body.frequency || 'DAILY',
+      dueDate: body.dueDate ? new Date(body.dueDate) : new Date(),
       status: body.status || 'PENDING',
-      assignedTo: body.assignedTo,
+      createdById: body.createdById || '1', // TODO: Get from session
     },
   });
 
@@ -42,12 +54,12 @@ export const PATCH = withErrorHandling(async (req: NextRequest) => {
   const task = await prisma.task.update({
     where: { id: recordId },
     data: {
-      title: body.title,
+      name: body.name || body.title,
       description: body.description,
       category: body.category,
       frequency: body.frequency,
       status: body.status,
-      assignedTo: body.assignedTo,
+      dueDate: body.dueDate ? new Date(body.dueDate) : undefined,
     },
   });
 

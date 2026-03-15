@@ -18,7 +18,7 @@ export async function apiFetch<T>(
   if (!response.ok) {
     const error = await response.json().catch(() => ({
       error: 'Unknown error',
-    }));
+    })) as Record<string, string>;
     throw new Error(error.error || 'API request failed');
   }
 

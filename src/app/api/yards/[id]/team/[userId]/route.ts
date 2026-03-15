@@ -77,7 +77,7 @@ export const DELETE = withErrorHandling(async (req: NextRequest) => {
     },
   });
 
-  if (user.role === 'YARD_MANAGER' && managerCount <= 1) {
+  if (user!.role === 'YARD_MANAGER' && managerCount <= 1) {
     Errors.forbidden();
   }
 

@@ -31,7 +31,7 @@ export function AddMedicalRecord({ horseId, onClose }: AddMedicalRecordProps) {
       onClose();
     } catch (err: unknown) {
       console.error('Error creating medical record:', err);
-      const errorMsg = (err as { message?: string })?.message || 'Failed to add medical record';
+      const errorMsg = (err as Record<string, string>)?.message || 'Failed to add medical record';
       setError(errorMsg);
       setLoading(false);
     }

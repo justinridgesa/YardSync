@@ -18,8 +18,8 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
 
   const notes = await prisma.note.findMany({
     where: {
-      horseId,
-      tag: (tag as string) || undefined,
+      horseId: horseId as string,
+      tag: (tag as string | null) || undefined,
     },
     include: {
       author: {
@@ -34,8 +34,8 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
 
   const total = await prisma.note.count({
     where: {
-      horseId,
-      tag: (tag as string) || undefined,
+      horseId: horseId as string,
+      tag: (tag as string | null) || undefined,
     },
   });
 

@@ -17,8 +17,9 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     data: {
       horseId,
       name: body.name,
-      date: body.date,
-      expiryDate: body.expiryDate,
+      lastDate: body.lastDate || body.date ? new Date(body.lastDate || body.date) : undefined,
+      nextDueDate: body.nextDueDate || body.expiryDate ? new Date(body.nextDueDate || body.expiryDate) : new Date(),
+      notes: body.notes,
     },
   });
 
@@ -40,8 +41,9 @@ export const PATCH = withErrorHandling(async (req: NextRequest) => {
     where: { id: recordId },
     data: {
       name: body.name,
-      date: body.date,
-      expiryDate: body.expiryDate,
+      lastDate: body.lastDate || body.date ? new Date(body.lastDate || body.date) : undefined,
+      nextDueDate: body.nextDueDate || body.expiryDate ? new Date(body.nextDueDate || body.expiryDate) : undefined,
+      notes: body.notes,
     },
   });
 

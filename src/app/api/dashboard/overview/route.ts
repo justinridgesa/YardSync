@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { withErrorHandling, successResponse } from '@/lib/api-helpers';
-import { AlertLevel } from '@prisma/client';
 
 // GET /api/dashboard/overview - Manager dashboard
 export const GET = withErrorHandling(async (req: NextRequest) => {
@@ -39,7 +38,7 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
   const alertHorses = await prisma.horse.findMany({
     where: {
       yardId,
-      currentAlertLevel: { in: ['AMBER' as AlertLevel, 'RED' as AlertLevel] },
+      currentAlertLevel: { in: ['AMBER', 'RED'] },
     },
     select: {
       id: true,

@@ -13,11 +13,22 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     Errors.badRequest('Horse ID is required');
   }
 
+  // Get horse to get yardId
+  const horse = await prisma.horse.findUnique({
+    where: { id: horseId },
+    select: { yardId: true },
+  });
+
+  if (!horse) {
+    Errors.notFound('Horse');
+  }
+
   const note = await prisma.note.create({
     data: {
       horseId,
-      content: body.content,
-      authorId: body.authorId || '1', // TODO: Get from session
+      yardId: horse!.yardId,
+      text: body.text || body.content,
+      createdBy: body.createdBy || '1', // TODO: Get from session
       tag: body.tag || 'GENERAL',
     },
   });
@@ -39,7 +50,7 @@ export const PATCH = withErrorHandling(async (req: NextRequest) => {
   const note = await prisma.note.update({
     where: { id: recordId },
     data: {
-      content: body.content,
+      text: body.text || body.content,
       tag: body.tag,
     },
   });

@@ -31,7 +31,10 @@ export function AddTask({ horseId, onClose }: AddTaskProps) {
       await mutation.mutateAsync(formData);
       onClose();
     } catch (err: unknown) {
-      setError((err as { message?: string })?.message || 'Failed to add task');
+      const errorMsg = typeof err === 'object' && err !== null && 'message' in err
+        ? String((err as Record<string, unknown>).message)
+        : 'Failed to add task';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

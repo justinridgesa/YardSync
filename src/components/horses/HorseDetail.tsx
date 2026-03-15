@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useHorse } from '@/lib/hooks/useHorses';
+import type { HorseDetail } from '@/lib/hooks/useHorses';
 import { MedicalHistoryTab } from './MedicalHistoryTab';
 import { VaccinationsTab } from './VaccinationsTab';
 import { NotesTab } from './NotesTab';
@@ -203,13 +204,7 @@ export function HorseDetail({ horseId }: HorseDetailProps) {
   );
 }
 
-interface HorseData {
-  breed?: string;
-  color?: string;
-  [key: string]: unknown;
-}
-
-function OverviewTab({ horse }: { horse: HorseData }) {
+function OverviewTab({ horse }: { horse: HorseDetail }) {
   return (
     <div className="space-y-4">
       <div>
@@ -234,11 +229,11 @@ function OverviewTab({ horse }: { horse: HorseData }) {
         </dl>
       </div>
 
-      {horse.assignedGroom && (
+      {horse.groom && (
         <div className="border-t border-gray-200 pt-4">
           <h3 className="font-semibold text-gray-900">Assigned Groom</h3>
-          <p className="mt-2 text-sm text-gray-600">{horse.assignedGroom.name}</p>
-          <p className="text-xs text-gray-500">{horse.assignedGroom.email}</p>
+          <p className="mt-2 text-sm text-gray-600">{horse.groom.name}</p>
+          <p className="text-xs text-gray-500">{horse.groom.email}</p>
         </div>
       )}
 

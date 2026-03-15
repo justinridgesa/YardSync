@@ -18,7 +18,7 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
 
   const tasks = await prisma.task.findMany({
     where: {
-      yardId,
+      yardId: yardId as string,
       horseId: horseId || undefined,
       status: (status as string) || undefined,
       dueDate: date
@@ -66,6 +66,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   const task = await prisma.task.create({
     data: {
       ...data,
+      createdById: body.createdById || '1', // TODO: Get from session
       dueDate: typeof data.dueDate === 'string'
         ? new Date(data.dueDate)
         : data.dueDate,
