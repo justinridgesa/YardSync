@@ -31,7 +31,7 @@ export function Sidebar() {
     { href: '/horses', label: 'Horses', icon: Zap },
   ];
 
-  if (!mounted) return null;
+  if (!mounted || !user) return null;
 
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + '/');
 
