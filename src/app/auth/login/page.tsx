@@ -48,8 +48,8 @@ export default function AuthLoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
+    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800 fixed inset-0">
+      <div className="w-full max-w-md px-4">
         {!showForm ? (
           /* Landing Screen */
           <div className="rounded-2xl bg-white p-12 shadow-2xl text-center">
