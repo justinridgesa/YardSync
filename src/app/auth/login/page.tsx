@@ -19,23 +19,31 @@ export default function AuthLoginPage() {
     setError('');
 
     try {
-      // TODO: Implement actual login via API
-      console.log('Login attempt:', { email, password });
-      
-      // Placeholder: create mock user session
-      const mockUser = {
-        id: '1',
-        email,
-        name: email.split('@')[0],
-      };
-      
-      login(mockUser);
-      
+      // Call login API
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Login failed');
+      }
+
+      const data = await response.json();
+      const user = data.user;
+
+      // Login user
+      login(user);
+
       // Set auth cookie for middleware with proper formatting
       const expiryDate = new Date();
       expiryDate.setTime(expiryDate.getTime() + (7 * 24 * 60 * 60 * 1000));
-      document.cookie = `yard_sync_token=${mockUser.id};path=/;expires=${expiryDate.toUTCString()}`;
-      
+      document.cookie = `yard_sync_token=${user.id};path=/;expires=${expiryDate.toUTCString()}`;
+
       // Small delay to ensure cookie is set, then redirect
       setTimeout(() => {
         router.push('/dashboard');
