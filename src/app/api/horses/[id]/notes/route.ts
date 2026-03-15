@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db';
 import { withErrorHandling, successResponse } from '@/lib/api-helpers';
 import { Errors } from '@/lib/errors';
 
+export const dynamic = 'force-dynamic';
+
 // POST /api/horses/:id/notes - Create note
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const { pathname } = new URL(req.url);

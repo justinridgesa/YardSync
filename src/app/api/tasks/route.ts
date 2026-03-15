@@ -4,6 +4,8 @@ import { withErrorHandling, successResponse } from '@/lib/api-helpers';
 import { taskCreateSchema } from '@/lib/validations';
 import { Errors } from '@/lib/errors';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/tasks - List tasks
 export const GET = withErrorHandling(async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);

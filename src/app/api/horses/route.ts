@@ -4,6 +4,8 @@ import { withErrorHandling, successResponse } from '@/lib/api-helpers';
 import { horseCreateSchema } from '@/lib/validations';
 import { Errors } from '@/lib/errors';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/horses - List horses
 export const GET = withErrorHandling(async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);

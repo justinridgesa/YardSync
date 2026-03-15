@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db';
 import { withErrorHandling, successResponse } from '@/lib/api-helpers';
 import { Errors } from '@/lib/errors';
 
+export const dynamic = 'force-dynamic';
+
 // PATCH /api/yards/[id]/team/[userId] - Update team member
 export const PATCH = withErrorHandling(async (req: NextRequest) => {
   const { pathname } = new URL(req.url);

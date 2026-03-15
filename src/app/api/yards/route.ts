@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/db';
 import { withErrorHandling, successResponse } from '@/lib/api-helpers';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/yards - List yards
 export const GET = withErrorHandling(async () => {
   console.log('GET /api/yards called');
