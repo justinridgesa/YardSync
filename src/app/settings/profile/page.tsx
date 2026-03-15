@@ -6,6 +6,12 @@ import { useAuth } from '@/lib/context/AuthContext';
 import { Header } from '@/components/Header';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 
+declare global {
+  interface Window {
+    debugProfile: () => void;
+  }
+}
+
 interface UserItem {
   id: string;
   name: string;
@@ -32,7 +38,7 @@ export default function UserProfilePage() {
 
   // Add a global debug function
   useEffect(() => {
-    (window as any).debugProfile = () => {
+    window.debugProfile = () => {
       console.log('=== PROFILE DEBUG INFO ===');
       console.log('Current formData:', formData);
       console.log('Current user object:', user);

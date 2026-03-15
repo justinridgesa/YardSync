@@ -36,7 +36,7 @@ export async function GET() {
         name: true,
         email: true,
         role: true,
-      } as any,
+      },
       orderBy: { name: 'asc' },
     });
 

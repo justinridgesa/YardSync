@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/db';
 
+interface UpdateUserData {
+  name: string;
+  contactNumber?: string;
+  role?: string;
+}
+
 export async function PUT(request: NextRequest) {
   console.log('🔵 [API] PUT /api/users/profile called');
   
@@ -39,7 +45,7 @@ export async function PUT(request: NextRequest) {
     console.log('🔵 [API] Target User ID:', targetUserId);
 
     // Build update data
-    const updateData: any = {
+    const updateData: UpdateUserData = {
       name: `${firstName} ${lastName}`,
     };
 
@@ -68,7 +74,7 @@ export async function PUT(request: NextRequest) {
           id: user.id,
           email: user.email,
           name: user.name,
-          contactNumber: (user as any).contactNumber,
+          contactNumber: user.contactNumber || null,
           role: user.role,
         },
       },
