@@ -110,7 +110,7 @@ export function useCreateHorse() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return apiPost('/horses', data);
     },
     onSuccess: () => {
@@ -123,7 +123,7 @@ export function useUpdateHorse(horseId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}`, data);
     },
     onSuccess: () => {

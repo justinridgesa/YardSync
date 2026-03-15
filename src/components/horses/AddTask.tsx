@@ -30,8 +30,8 @@ export function AddTask({ horseId, onClose }: AddTaskProps) {
     try {
       await mutation.mutateAsync(formData);
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Failed to add task');
+    } catch (err: unknown) {
+      setError((err as { message?: string })?.message || 'Failed to add task');
     } finally {
       setLoading(false);
     }

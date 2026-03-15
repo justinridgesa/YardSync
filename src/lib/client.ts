@@ -43,7 +43,7 @@ export function apiGet<T>(
  */
 export function apiPost<T>(
   endpoint: string,
-  data?: any,
+  data?: unknown,
   options?: RequestInit
 ): Promise<T> {
   return apiFetch(endpoint, {
@@ -58,7 +58,7 @@ export function apiPost<T>(
  */
 export function apiPatch<T>(
   endpoint: string,
-  data?: any,
+  data?: unknown,
   options?: RequestInit
 ): Promise<T> {
   return apiFetch(endpoint, {

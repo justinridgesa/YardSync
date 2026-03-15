@@ -42,7 +42,7 @@ export function withErrorHandling(handler: ApiHandler): ApiHandler {
  */
 export async function parseBody<T>(
   req: NextRequest,
-  schema: any
+  schema: { parse: (data: unknown) => T }
 ): Promise<T> {
   try {
     const body = await req.json();

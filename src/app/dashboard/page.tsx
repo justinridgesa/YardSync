@@ -115,7 +115,7 @@ export default function DashboardPage() {
 
               <div className="relative z-10">
                 <div className="mb-8 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Today's Compliance</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">Today&apos;s Compliance</h3>
                   <div className="rounded-full bg-emerald-100 p-2">
                     <CheckCircle2 className="h-5 w-5 text-emerald-700" />
                   </div>

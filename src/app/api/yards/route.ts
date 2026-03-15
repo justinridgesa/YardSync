@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db';
 import { withErrorHandling, successResponse } from '@/lib/api-helpers';
 
 // GET /api/yards - List yards
-export const GET = withErrorHandling(async (req: NextRequest) => {
+export const GET = withErrorHandling(async () => {
   console.log('GET /api/yards called');
   const yards = await prisma.yard.findMany({
     orderBy: { name: 'asc' },

@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { HorseForm } from '@/components/horses/HorseForm';
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';

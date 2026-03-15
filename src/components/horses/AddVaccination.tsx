@@ -27,8 +27,8 @@ export function AddVaccination({ horseId, onClose }: AddVaccinationProps) {
     try {
       await mutation.mutateAsync(formData);
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Failed to add vaccination');
+    } catch (err: unknown) {
+      setError((err as { message?: string })?.message || 'Failed to add vaccination');
     } finally {
       setLoading(false);
     }

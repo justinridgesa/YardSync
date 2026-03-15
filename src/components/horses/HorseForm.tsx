@@ -63,7 +63,7 @@ export function HorseForm({ horseId, yardId, onSuccess }: HorseFormProps) {
       };
       fetchYardId();
     }
-  }, []);
+  }, [yardId]);
 
   // Fetch team members (grooms and owners)
   useEffect(() => {
@@ -117,7 +117,7 @@ export function HorseForm({ horseId, yardId, onSuccess }: HorseFormProps) {
         ownerId: existingHorse.owner?.id || '',
       });
     }
-  }, [existingHorse]);
+  }, [existingHorse, yardId]);
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -156,8 +156,8 @@ export function HorseForm({ horseId, yardId, onSuccess }: HorseFormProps) {
 
       onSuccess?.();
       router.push(horseId ? `/horses/${horseId}` : '/horses');
-    } catch (err: any) {
-      setError(err.message || 'An error occurred');
+    } catch (err: unknown) {
+      setError((err as { message?: string })?.message || 'An error occurred');
     } finally {
       setLoading(false);
     }

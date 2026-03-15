@@ -1,4 +1,3 @@
-import { Role, AlertLevel } from '@prisma/client';
 import { z } from 'zod';
 
 // User validation

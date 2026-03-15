@@ -29,9 +29,9 @@ export function AddMedicalRecord({ horseId, onClose }: AddMedicalRecordProps) {
       await mutation.mutateAsync(formData);
       console.log('Medical record created successfully');
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error creating medical record:', err);
-      const errorMsg = err?.message || 'Failed to add medical record';
+      const errorMsg = (err as { message?: string })?.message || 'Failed to add medical record';
       setError(errorMsg);
       setLoading(false);
     }

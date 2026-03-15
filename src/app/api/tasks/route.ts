@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { withErrorHandling, successResponse } from '@/lib/api-helpers';
 import { taskCreateSchema } from '@/lib/validations';
@@ -20,7 +20,7 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
     where: {
       yardId,
       horseId: horseId || undefined,
-      status: (status as any) || undefined,
+      status: (status as string) || undefined,
       dueDate: date
         ? {
             gte: new Date(date),

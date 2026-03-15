@@ -203,7 +203,13 @@ export function HorseDetail({ horseId }: HorseDetailProps) {
   );
 }
 
-function OverviewTab({ horse }: any) {
+interface HorseData {
+  breed?: string;
+  color?: string;
+  [key: string]: unknown;
+}
+
+function OverviewTab({ horse }: { horse: HorseData }) {
   return (
     <div className="space-y-4">
       <div>

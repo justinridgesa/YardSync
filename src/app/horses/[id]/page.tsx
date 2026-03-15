@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { HorseDetail } from '@/components/horses/HorseDetail';
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';

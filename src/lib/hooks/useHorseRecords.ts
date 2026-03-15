@@ -6,7 +6,7 @@ export function useCreateMedicalHistory(horseId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       console.log('Mutation: Creating medical history for horse:', horseId, 'Data:', data);
       try {
         const result = await apiPost(`/horses/${horseId}/medical`, data);
@@ -21,8 +21,8 @@ export function useCreateMedicalHistory(horseId: string) {
       console.log('Invalidating query for horse:', horseId);
       queryClient.invalidateQueries({ queryKey: ['horse', horseId] });
     },
-    onError: (error: any) => {
-      console.error('Mutation error:', error.message);
+    onError: (error: unknown) => {
+      console.error('Mutation error:', (error as { message?: string })?.message);
     },
   });
 }
@@ -31,7 +31,7 @@ export function useUpdateMedicalHistory(horseId: string, recordId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}/medical/${recordId}`, data);
     },
     onSuccess: () => {
@@ -58,7 +58,7 @@ export function useCreateVaccination(horseId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return apiPost(`/horses/${horseId}/vaccinations`, data);
     },
     onSuccess: () => {
@@ -71,7 +71,7 @@ export function useUpdateVaccination(horseId: string, recordId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}/vaccinations/${recordId}`, data);
     },
     onSuccess: () => {
@@ -98,7 +98,7 @@ export function useCreateNote(horseId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return apiPost(`/horses/${horseId}/notes`, data);
     },
     onSuccess: () => {
@@ -111,7 +111,7 @@ export function useUpdateNote(horseId: string, recordId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}/notes/${recordId}`, data);
     },
     onSuccess: () => {
@@ -138,7 +138,7 @@ export function useCreateTask(horseId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return apiPost(`/horses/${horseId}/tasks`, data);
     },
     onSuccess: () => {
@@ -151,7 +151,7 @@ export function useUpdateTask(horseId: string, recordId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: unknown) => {
       return apiPatch(`/horses/${horseId}/tasks/${recordId}`, data);
     },
     onSuccess: () => {

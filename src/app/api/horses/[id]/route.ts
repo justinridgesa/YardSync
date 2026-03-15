@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { withErrorHandling, successResponse } from '@/lib/api-helpers';
 import { Errors } from '@/lib/errors';
@@ -70,7 +70,7 @@ export const PATCH = withErrorHandling(async (req: NextRequest) => {
   // TODO: Verify user is YARD_MANAGER
 
   // Only include valid fields in the update
-  const validFields: any = {};
+  const validFields: Record<string, unknown> = {};
   const allowedFields = ['name', 'breed', 'age', 'sex', 'color', 'passportNumber', 'assignedGroom', 'ownerId', 'feedPlan', 'supplements', 'activeMedication', 'workSchedule'];
   
   for (const field of allowedFields) {

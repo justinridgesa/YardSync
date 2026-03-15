@@ -27,8 +27,8 @@ export function AddNote({ horseId, onClose }: AddNoteProps) {
     try {
       await mutation.mutateAsync(formData);
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Failed to add note');
+    } catch (err: unknown) {
+      setError((err as { message?: string })?.message || 'Failed to add note');
     } finally {
       setLoading(false);
     }
