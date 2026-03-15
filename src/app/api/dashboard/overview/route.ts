@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { withErrorHandling, successResponse } from '@/lib/api-helpers';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/dashboard/overview - Manager dashboard
 export const GET = withErrorHandling(async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
