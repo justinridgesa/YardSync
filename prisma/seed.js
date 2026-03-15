@@ -15,6 +15,19 @@ async function main() {
 
   console.log(`Created yard: ${yard.name}`);
 
+  // Create admin user
+  const admin = await prisma.user.create({
+    data: {
+      email: 'justinridgesa@gmail.com',
+      name: 'Justin Ridge',
+      password: 'ircftpie',
+      role: 'ADMINISTRATOR',
+      yardId: yard.id,
+    },
+  });
+
+  console.log(`Created admin user: ${admin.email}`);
+
   // Create managers
   const manager1 = await prisma.user.create({
     data: {
